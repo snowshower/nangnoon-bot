@@ -17,6 +17,14 @@ class Message(commands.Cog):
     @commands.command(name="인생사")
     async def life_command(self, ctx):
         await ctx.send("🏇새옹지마")
+        
+    @commands.command(name="빵구")
+    async def poop_command(self, ctx):
+        await ctx.send("💨뿡!")
+        
+    @commands.command(name="바부")
+    async def stupid_command(self, ctx):
+        await ctx.send("🫵")
 
 async def setup(bot):
     await bot.add_cog(Message(bot))
