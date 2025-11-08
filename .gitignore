@@ -1,0 +1,22 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+
+# 1. 파이썬 가상 환경 폴더
+venv/
+.venv/
+
+# 2. 파이썬 캐시 및 컴파일 파일
+__pycache__/
+*.pyc
+
+# 3. IDE 및 편집기 설정 폴더
+.idea/
+.vscode/
+
+# 4. (매우 중요) 민감 정보 파일
+# API 키, 비밀번호 등을 포함하는 파일들
+.env
+*.key
+config.ini
+
+# 5. 기타 로그 파일
+*.log
