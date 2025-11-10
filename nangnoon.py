@@ -18,7 +18,7 @@ async def on_ready():
         await bot.tree.sync()
         print("슬래시 커맨드 동기화 완료")
     except Exception as e:
-        print(f"동기화 실해: {e}")
+        print(f"동기화 실패: {e}")
 
 async def main():
     if BOT_TOKEN is None:
