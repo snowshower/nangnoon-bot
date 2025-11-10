@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import random
 
 class Fortunes(commands.Cog):
@@ -21,15 +22,15 @@ class Fortunes(commands.Cog):
         except Exception as e:
             print(f"포춘쿠키 파일 로드 중 오류 발생: {e}")
     
-    @commands.command(name='포춘쿠키')
-    async def fortune_cookie(self, ctx):
+    @app_commands.command(name='포춘쿠키', description="포춘쿠키를 뽑아보세요!")
+    async def fortune_cookie(self, interaction: discord.Interaction):
         if not self.fortunes:
-            await ctx.send("아직 포춘쿠키 반죽을 굽는 중이에요!")
+            await interaction.response.send_message("아직 포춘쿠키 반죽을 굽는 중이에요!")
             return
         
         selected_message=random.choice(self.fortunes)
         
-        await ctx.send(f"🥠 {selected_message}")
+        await interaction.response.send_message(f"🥠 {selected_message}")
     
 async def setup(bot):
     await bot.add_cog(Fortunes(bot))
