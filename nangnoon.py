@@ -28,6 +28,17 @@ try:
                    )
                    """)
     
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS lotto_tickets(
+                       ticket_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       user_id INTEGER NOT NULL,
+                       guild_id INTEGER NOT NULL,
+                       numbers TEXT NOT NULL,
+                       purchase_date TEXT NOT NULL,
+                       status TEXT DEFAULT 'pending'
+                   )
+                   """)
+    
     bot.db_conn.commit()
     print("메인: 모든 테이블 준비 완료.")
 
