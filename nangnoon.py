@@ -1,9 +1,12 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os   # cogs 폴더 안의 파일 목록을 읽기 위해 사용
 import asyncio
 from dotenv import load_dotenv
 import sqlite3
+import pytz
+import datetime
+from lotto_domain.lotto_generator import generate_lotto
 
 load_dotenv()
 BOT_TOKEN=os.getenv("BOT_TOKEN")
@@ -11,6 +14,8 @@ BOT_TOKEN=os.getenv("BOT_TOKEN")
 intents=discord.Intents.all()
 
 bot=commands.Bot(command_prefix=None, intents=intents)
+
+KST=pytz.timezone("Asia/Seoul")
 
 try:
     bot.db_conn=sqlite3.connect("lotto.db")
@@ -39,16 +44,69 @@ try:
                    )
                    """)
     
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS winning_numbers(
+                       date TEXT PRIMARY KEY,
+                       numbers TEXT NOT NULL
+                   )
+                   """)
+    
     bot.db_conn.commit()
     print("메인: 모든 테이블 준비 완료.")
 
 except Exception as e:
     print(f"메인: DB 연결 실패: {e}")
     exit()
+    
+@tasks.loop(time=datetime.time(hour=0, minute=0, tzinfo=KST))
+async def daily_lotto_task():
+    await bot.wait_until_ready()
+    
+    today=datetime.datetime.now(KST).strftime('%Y-%m-%d')
+    print(f"[{today} 00:00] 일일 로또 태스크 시작...")
+    
+    try:
+        cursor=bot.db_conn.cursor()
+        
+        new_winning_numbers=generate_lotto()
+        numebrs_str=",".join(map(str, new_winning_numbers))
+        
+        cursor.execute("INSERT OR REPLACE INTO winning_numbers (date, numbers) VALUES (?, ?)", (today, numebrs_str))
+        print(f"오늘({today})의 당첨 번호 생성 완료: {numebrs_str}")
+        
+        yesterday=(datetime.datetime.now(KST) - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+        cursor.execute("""
+                       UPDATE lotto_tickets
+                       SET status = 'expired'
+                       WHERE purchase_date=? AND status='pending'
+                       """, (yesterday,))
+        print(f"어제({yesterday})의 미확인 로또 폐기 완료.")
+        
+        bot.db_conn.commit()
+    except Exception as e:
+        print(f"일일 로또 태스크 실행 중 오류 발생: {e}")
+        bot.db_conn.rollback()
 
 @bot.event
 async def on_ready():
     print(f'{bot.user} (으)로 로그인했습니다.')
+    
+    try:
+        today=datetime.datetime.now(KST).strftime('%Y-%m-%d')
+        cursor=bot.db_conn.cursor()
+        cursor.execute("SELECT 1 FROM winning_numbers WHERE date=?", (today,))
+        
+        if cursor.fetchone() is None:
+            print(f"[{today}] 봇 시작: 오늘자 당첨 번호가 없습니다. 즉시 생성합니다...")
+            await daily_lotto_task()
+        else:
+            print(f"[{today}] 봇 시작: 오늘자 당첨 번호가 이미 존재합니다.")
+    except Exception as e:
+        print(f"봇 시작 시 당첨 번호 체크 실패: {e}")
+    
+    if not daily_lotto_task.is_running():
+        daily_lotto_task.start()
+        
     try:
         await bot.tree.sync()
         print("슬래시 커맨드 동기화 완료")
@@ -70,7 +128,8 @@ async def main():
             except Exception as e:
                 print(f"Cog 로드 실패: {module_name} (에러: {e})")
     
-    await bot.start(BOT_TOKEN)
+    async with bot:
+        await bot.start(BOT_TOKEN)
 
 if __name__=='__main__':
     try:

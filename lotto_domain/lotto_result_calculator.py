@@ -5,7 +5,7 @@ from collections import defaultdict
 class lotto_result_calculator:
     
     @staticmethod
-    def lotto_result_calculator(winning_lotto: lotto, my_lotto: lotto) -> lotto_rank:
+    def calculate_single_result(winning_lotto: lotto, my_lotto: lotto) -> lotto_rank:
         winning_numbers=set(winning_lotto.numbers)
         my_numbers=set(my_lotto.numbers)
         match_count=len(winning_numbers & my_numbers)
@@ -18,7 +18,7 @@ class lotto_result_calculator:
         results=defaultdict(int)
         
         for lotto in my_lottos:
-            rank=lotto_result_calculator.lotto_result_calculator(winning_lotto, lotto)
+            rank=lotto_result_calculator.calculate_single_result(winning_lotto, lotto)
             results[rank]+=1
         
         return dict(results)

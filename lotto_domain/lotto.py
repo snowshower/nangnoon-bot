@@ -12,8 +12,8 @@ class lotto:
         if any(n<MIN_LOTTO_NUMBER or n>MAX_LOTTO_NUMBER for n in numbers):
             raise ValueError("[ERROR]: 로또 번호는 1~45 사이여야 합니다!")
         
-        self.numbers=sorted(numbers)
+        self._numbers=sorted(numbers)
     
     @property
-    def get_numbers(self) -> tuple[int]:
-        return tuple(self.numbers)
+    def numbers(self) -> tuple[int]:
+        return tuple(self._numbers)
