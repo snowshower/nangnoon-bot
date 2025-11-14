@@ -20,9 +20,11 @@ try:
     cursor=bot.db_conn.cursor()
     cursor.execute("""
                    CREATE TABLE IF NOT EXISTS users(
-                       user_id INTEGER PRIMARY KEY,
+                       user_id INTEGER NOT NULL,
+                       guild_id INTEGER NOT NULL,
                        points INTEGER DEFAULT 0,
-                       last_checkin TEXT DEFAULT '1970-01-01'
+                       last_checkin TEXT DEFAULT '1970-01-01',
+                       PRIMARY KEY (user_id, guild_id)
                    )
                    """)
     
