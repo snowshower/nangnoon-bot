@@ -3,6 +3,7 @@ from discord.ext import commands
 import os   # cogs 폴더 안의 파일 목록을 읽기 위해 사용
 import asyncio
 from dotenv import load_dotenv
+import sqlite3
 
 load_dotenv()
 BOT_TOKEN=os.getenv("BOT_TOKEN")
@@ -10,6 +11,27 @@ BOT_TOKEN=os.getenv("BOT_TOKEN")
 intents=discord.Intents.all()
 
 bot=commands.Bot(command_prefix=None, intents=intents)
+
+try:
+    bot.db_conn=sqlite3.connect("lotto.db")
+    bot.db_conn.row_factory=sqlite3.Row
+    print("메인: DB 연결 성공. (lotto.db)")
+    
+    cursor=bot.db_conn.cursor()
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS users(
+                       user_id INTEGER PRIMARY KEY,
+                       points INTEGER DEFAULT 0,
+                       last_checkin TEXT DEFAULT '1970-01-01'
+                   )
+                   """)
+    
+    bot.db_conn.commit()
+    print("메인: 모든 테이블 준비 완료.")
+
+except Exception as e:
+    print(f"메인: DB 연결 실패: {e}")
+    exit()
 
 @bot.event
 async def on_ready():
@@ -38,7 +60,12 @@ async def main():
     await bot.start(BOT_TOKEN)
 
 if __name__=='__main__':
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    finally:
+        if hasattr(bot, 'db_conn'):
+            bot.db_conn.close()
+            print("메인: DB 연결 종료.")
 
     
 # # 명령어 접두사를 !로 사용
