@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 import sqlite3
 
-class ranking(commands.Cog):
+class Ranking(commands.Cog):
     def __init__(self, bot:commands.Bot):
         self.bot=bot
         self.conn: sqlite3.Connection=self.bot.db_conn
@@ -33,13 +33,13 @@ class ranking(commands.Cog):
                            LIMIT 10
                            """, (guild_id,))
             
-            rank_data=cursor.fetchone()
+            rank_data=cursor.fetchall()
             
             if not rank_data:
                 await interaction.followup.send("ℹ️ 아직 서버에 랭킹 데이터가 없어요!")
                 return
             
-            response_msg=f"--- 🏆 **{interaction.guild.name} 서버 포인트 랭킹** ---\n\n"
+            response_msg=f"=== 🏆 **{interaction.guild.name} 서버 포인트 랭킹** ===\n\n"
             
             for i, row in enumerate(rank_data):
                 user_id=row["user_id"]
@@ -71,4 +71,4 @@ class ranking(commands.Cog):
             await interaction.followup.send(f"❌ 랭킹을 불러오는 중 오류가 발생했어요! {e}", ephemeral=True)
 
 async def setup(bot):
-    await bot.add_cog(ranking(bot))
+    await bot.add_cog(Ranking(bot))
