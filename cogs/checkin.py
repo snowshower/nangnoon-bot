@@ -8,7 +8,7 @@ import pytz
 CHECKIN_REWARD=1000
 KST=pytz.timezone("Asia/Seoul")
 
-class checkin(commands.Cog):
+class Checkin(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot=bot
         self.conn: sqlite3.Connection=self.bot.db_conn
@@ -76,4 +76,4 @@ class checkin(commands.Cog):
             await interaction.followup.send("❌ 출석체크 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", ephemeral=True)
 
 async def setup(bot):
-    await bot.add_cog(checkin(bot))
+    await bot.add_cog(heckin(bot))

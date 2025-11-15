@@ -12,7 +12,7 @@ from lotto_domain.lotto_result_calculator import lotto_result_calculator
 
 KST=pytz.timezone("Asia/Seoul")
 
-class lotto_result(commands.Cog):
+class LottoResult(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot=bot
         self.conn: sqlite3.Connection=self.bot.db_conn
@@ -105,4 +105,4 @@ class lotto_result(commands.Cog):
             await interaction.followup.send(f"❌ 결과 확인 중 오류가 발생했습니다: {e}", ephemeral=True)
 
 async def setup(bot):
-    await bot.add_cog(lotto_result(bot))
+    await bot.add_cog(LottoResult(bot))

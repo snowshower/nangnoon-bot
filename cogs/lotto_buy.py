@@ -10,7 +10,7 @@ from lotto_domain.lotto_generator import generate_lotto
 KST=pytz.timezone("Asia/Seoul")
 LOTTO_PRICE=1000
 
-class lotto_buy(commands.Cog):
+class LottoBuy(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot=bot
         self.conn: sqlite3.Connection=self.bot.db_conn
@@ -101,4 +101,4 @@ class lotto_buy(commands.Cog):
             await interaction.followup.send(f"❌ 구매 중 오류가 발생했습니다: {e}", ephemeral=True)
 
 async def setup(bot):
-    await bot.add_cog(lotto_buy(bot))
+    await bot.add_cog(LottoBuy(bot))
