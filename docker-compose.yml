@@ -6,7 +6,7 @@ services:
     image: snowshower/nangnoon-bot:latest
 
     volumes:
-      - lotto_db_data:/app/lotto.db
+      - lotto_db_data:/app/db
     
     env_file:
       - ./.env

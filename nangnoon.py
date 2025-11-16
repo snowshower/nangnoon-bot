@@ -18,9 +18,14 @@ bot=commands.Bot(command_prefix=None, intents=intents)
 KST=pytz.timezone("Asia/Seoul")
 
 try:
-    bot.db_conn=sqlite3.connect("lotto.db")
+    DB_DIR="db"
+    DB_PATH=os.path.join(DB_DIR, "lotto.db")
+    
+    os.makedirs(DB_DIR, exist_ok=True)
+    
+    bot.db_conn=sqlite3.connect(DB_PATH)
     bot.db_conn.row_factory=sqlite3.Row
-    print("메인: DB 연결 성공. (lotto.db)")
+    print(f"메인: DB 연결 성공. {DB_PATH}")
     
     cursor=bot.db_conn.cursor()
     cursor.execute("""
