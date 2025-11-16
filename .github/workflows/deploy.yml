@@ -1,0 +1,50 @@
+name: CI/CD Docker Deploy
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+  steps:
+  - name: 코드 체크아웃
+    uses: actions/checkout@v3
+  
+  - name: Docker Hub 로그인
+    uses: docker/login-action@v2
+    with:
+      username: ${{ secrets.DOCKER_USERNAME }}
+      password: ${{ secrets.DOCKER_PASSWORD }}
+    
+  - name: Docker 이미지 빌드 및 푸시
+    uses: docker/build-push-action@v4
+    with:
+      context: .
+      push: true
+      tags: ${{ secrets.DOCKER_USERNAME }}nangnoon-bot:latest
+
+  deploy-to-vm:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Oracle VM에 SSH 접속하여 배포
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USERNAME }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        prot: 22
+
+        script: |
+          #3. Oracle VM 서버에서 실행될 명령어들
+          cd ~/nangnoon-bot
+          
+          curl -o docker-compose.yml https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/docker-compose.yml
+
+          docker pull ${{ secrets.DOCKER_USERNAME }}/nangnoon-bot:latest
+
+          docker-compose down
+          docker-compose up -d
