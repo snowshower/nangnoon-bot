@@ -3,7 +3,7 @@ version: '3.8'
 services:
   discord-bot:
 
-    build: .
+    image: snowshower/nangnoon-bot:latest
 
     volumes:
       - lotto_db_data:/app/lotto.db
