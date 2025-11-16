@@ -6,7 +6,7 @@ services:
     build: .
 
     volumes:
-      -lotto_db_data:/app/lotto.db
+      - lotto_db_data:/app/lotto.db
     
     env_file:
       - ./.env
