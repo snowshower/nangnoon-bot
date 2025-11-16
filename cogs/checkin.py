@@ -5,7 +5,7 @@ import sqlite3
 import datetime
 import pytz
 
-CHECKIN_REWARD=1000
+CHECKIN_REWARD=5000
 KST=pytz.timezone("Asia/Seoul")
 
 class Checkin(commands.Cog):
