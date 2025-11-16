@@ -11,6 +11,9 @@ jobs:
     steps:
     - name: 코드 체크아웃
       uses: actions/checkout@v3
+    
+    - name: Show directory structure (Debug)
+      run: ls -laR
   
     - name: Docker Hub 로그인
       uses: docker/login-action@v2
