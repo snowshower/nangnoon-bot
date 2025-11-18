@@ -2,7 +2,7 @@ name: CI/CD Docker Deploy
 
 on:
   push:
-    branches: ["develop"]
+    branches: ["main", "develop"]
 
 jobs:
   build-and-push:
