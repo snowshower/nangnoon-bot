@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  discord-bot:
+
+    image: snowshower/nangnoon-bot:latest
+
+    volumes:
+      - lotto_db_data:/app/db
+    
+    env_file:
+      - ./.env
+
+    restart: always
+
+volumes:
+  lotto_db_data:
